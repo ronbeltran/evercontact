@@ -30,4 +30,3 @@ class EverContact(object):
         signature = content['signature']
         content['signature'] = vobject.readOne(signature).contents
         return content
-
