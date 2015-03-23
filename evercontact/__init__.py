@@ -4,7 +4,6 @@ import json
 
 import vobject
 import requests
-from requests.auth import HTTPBasicAuth
 
 EVERCONTACT_API_ENDPOINT = 'https://api.evercontact.com/pulse-api/tag'
 ADDRESSING_MODE = [
@@ -100,7 +99,7 @@ class EverContact(object):
             payload.update({'AttachedFiles': attach_files})
 
         resp = requests.post(EVERCONTACT_API_ENDPOINT, data=payload,
-                             auth=HTTPBasicAuth(self.username, self.password))
+                             auth=(self.username, self.password))
         content = json.loads(resp.content)
 
         if signature_format not in ['json', 'vcard']:
