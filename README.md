@@ -34,3 +34,7 @@ The use in your python script:
             'EXPLICIT_TO',
             )
         print data
+
+## References:
+vobject: http://vobject.skyhouseconsulting.com/
+- vobject is used to parse vcard signature returned by evercontact api
