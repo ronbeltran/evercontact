@@ -6,6 +6,21 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 EVERCONTACT_API_ENDPOINT = 'https://api.evercontact.com/pulse-api/tag'
+MANDATORY_FIELDS = [
+    "ApiUser",
+    "Date",
+    "Subject",
+    "HeaderFrom",
+    "HeaderTo",
+    "AddressingMode",
+    "Content",
+    "AnalysisStrategy",
+]
+OPTIONAL_FIELDS = [
+    "HeaderCC",
+    "AttachedFiles",
+]
+ALL_FIELDS = MANDATORY_FIELDS + OPTIONAL_FIELDS
 
 
 class EverContact(object):
@@ -37,6 +52,8 @@ class EverContact(object):
             - Content: The Message Content, plain text/html.
                 Note: Content having more than 100 000 bytes
                 will return an Error
+            - AnalysisStrategy:
+                KWAGA_CORE for accuracy, WTN_EVERYWHERE in other cases
 
             Optional keys are the following:
             - HeaderCC: The Message “Cc” or “Bcc” Recipients
@@ -46,6 +63,15 @@ class EverContact(object):
                 Please note this parameter should be repeated when there are
                 multiple file attachments.
         """
+        invalid_fields = []
+        if payload:
+            for k in payload.keys():
+                if k not in ALL_FIELDS:
+                    invalid_fields.append(k)
+            if len(invalid_fields) > 0:
+                raise ValueError(
+                    'Got Invalid Fields: {0}'.format(', '.join(invalid_fields))
+                )
 
         resp = requests.post(EVERCONTACT_API_ENDPOINT, data=payload,
                              auth=HTTPBasicAuth(self.username, self.password))
