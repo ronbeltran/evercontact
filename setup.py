@@ -10,6 +10,5 @@ setup(name='EverContact API Python Client',
       packages=['evercontact'],
       install_requires=[
           'requests==2.6.0',
-          'vobject==0.6.6',
       ],
       zip_safe=False)

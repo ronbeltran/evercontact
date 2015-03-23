@@ -34,8 +34,7 @@ class EverContact(object):
 
     def fetch(self, date, subject, content,
               header_from, header_to, analysis_strategy,
-              addressing_mode='OTHER', header_cc=None, attach_files=None,
-              signature_format='json'):
+              addressing_mode='OTHER', header_cc=None, attach_files=None):
         """ EverContact API by default returns signature data in VCard format.
         signature: String
             Can be either in `vcard` or `json`
@@ -101,13 +100,4 @@ class EverContact(object):
         resp = requests.post(EVERCONTACT_API_ENDPOINT, data=payload,
                              auth=(self.username, self.password))
         content = json.loads(resp.content)
-
-        if signature_format not in ['json', 'vcard']:
-            return content
-        if signature_format == 'vcard':
-            return content
-        signature = content['signature']
-        sig_vobject = vobject.readOne(signature).contents
-        content['signature_json'] = sig_vobject
-        logging.info(vobject.readOne(signature).prettyPrint())
         return content
