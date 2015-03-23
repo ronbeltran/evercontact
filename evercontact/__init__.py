@@ -108,6 +108,6 @@ class EverContact(object):
             return content
         signature = content['signature']
         sig_vobject = vobject.readOne(signature).contents
-        content['signature'] = sig_vobject
+        content['signature_json'] = sig_vobject
         logging.info(vobject.readOne(signature).prettyPrint())
         return content
