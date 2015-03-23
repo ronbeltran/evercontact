@@ -75,9 +75,11 @@ class EverContact(object):
         if header_to is None:
             raise MandatoryFieldError('HeaderTo')
         if addressing_mode not in ADDRESSING_MODE:
-            raise ValueError('Invalid value for AddressingMode: {0}'.format(addressing_mode))
+            raise ValueError('Invalid value for AddressingMode: {0}'.format(
+                addressing_mode))
         if analysis_strategy not in ANALYSIS_STRATEGY:
-            raise ValueError('Invalid value for AnalysisStrategy: {0}'.format(analysis_strategy))
+            raise ValueError('Invalid value for AnalysisStrategy: {0}'.format(
+                analysis_strategy))
         if header_cc is None:
             header_cc = []
         if attach_files is None:
