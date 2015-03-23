@@ -27,8 +27,18 @@ First install evercontact module:
     ...     'WTN_EVERYWHERE',
     ...     'EXPLICIT_TO',
     ...     )
-    >>> print data
-    {u'signatureSnippet': u'Fr\xe9d\xe9ric Meunier\nCTO\nKwaga\nfoo@kwago.com', u'uid': 1427098098624, u'success': True, u'errorMessages': [], u'signature': {u'name': [<NAME{}Fr?d?ric Meunier>], u'n': [<N{} Fr?d?ric  Meunier >], u'source': [<SOURCE{}http\\://www.kwago.com>], u'version': [<VERSION{}3.0>], u'role': [<ROLE{}CTO>], u'org': [<ORG{}[u'Kwaga']>], u'email': [<EMAIL{}foo@kwago.com>], u'fn': [<FN{}Fr?d?ric Meunier>]}, u'mailId': u'name-in-1427098098624'}
+    >>> print data['signature']
+    BEGIN:VCARD
+    VERSION:3.0
+    N:Meunier;Frédéric;;;
+    FN:Frédéric Meunier
+    NAME:Frédéric Meunier
+    PROFILE:VCARD
+    SOURCE:http\\\://www.kwago.com
+    ROLE:CTO
+    ORG:Kwaga
+    EMAIL:foo@kwago.com
+    END:VCARD
     >>> 
 
 
