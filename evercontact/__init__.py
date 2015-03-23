@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+import logging
 import json
 
 import vobject
@@ -6,21 +7,24 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 EVERCONTACT_API_ENDPOINT = 'https://api.evercontact.com/pulse-api/tag'
-MANDATORY_FIELDS = [
-    "ApiUser",
-    "Date",
-    "Subject",
-    "HeaderFrom",
-    "HeaderTo",
-    "AddressingMode",
-    "Content",
-    "AnalysisStrategy",
+ADDRESSING_MODE = [
+    'EXPLICIT_FROM',
+    'EXPLICIT_TO',
+    'EXPLICIT_CC',
+    'OTHER',
 ]
-OPTIONAL_FIELDS = [
-    "HeaderCC",
-    "AttachedFiles",
-]
-ALL_FIELDS = MANDATORY_FIELDS + OPTIONAL_FIELDS
+ANALYSIS_STRATEGY = ['KWAGA_CORE', 'WTN_EVERYWHERE']
+
+
+class MandatoryFieldError(ValueError):
+
+    message = u'Missing mandatory {name} field.'
+
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return self.message.format(name=self.name)
 
 
 class EverContact(object):
@@ -29,7 +33,10 @@ class EverContact(object):
         self.username = username
         self.password = password
 
-    def fetch(self, payload, signature_format='json'):
+    def fetch(self, date, subject, content,
+              header_from, header_to, analysis_strategy,
+              addressing_mode='OTHER', header_cc=None, attach_files=None,
+              signature_format='json'):
         """ EverContact API by default returns signature data in VCard format.
         signature: String
             Can be either in `vcard` or `json`
@@ -63,23 +70,43 @@ class EverContact(object):
                 Please note this parameter should be repeated when there are
                 multiple file attachments.
         """
-        invalid_fields = []
-        if payload:
-            for k in payload.keys():
-                if k not in ALL_FIELDS:
-                    invalid_fields.append(k)
-            if len(invalid_fields) > 0:
-                raise ValueError(
-                    'Got Invalid Fields: {0}'.format(', '.join(invalid_fields))
-                )
+        if header_from is None:
+            raise MandatoryFieldError('HeaderFrom')
+        if header_to is None:
+            raise MandatoryFieldError('HeaderTo')
+        if addressing_mode not in ADDRESSING_MODE:
+            raise ValueError('Invalid value for AddressingMode: {0}'.format(addressing_mode))
+        if analysis_strategy not in ANALYSIS_STRATEGY:
+            raise ValueError('Invalid value for AnalysisStrategy: {0}'.format(analysis_strategy))
+        if header_cc is None:
+            header_cc = []
+        if attach_files is None:
+            attach_files = []
+        payload = {
+            'Date': date,
+            'ApiUser': self.username,
+            'Subject': subject,
+            'HeaderFrom': header_from,
+            'HeaderTo': header_to,
+            'AddressingMode': addressing_mode,
+            'AnalysisStrategy': analysis_strategy,
+            'Content': content,
+        }
+        if header_cc:
+            payload.update({'HeaderCC': header_cc})
+        if attach_files:
+            payload.update({'AttachedFiles': attach_files})
 
         resp = requests.post(EVERCONTACT_API_ENDPOINT, data=payload,
                              auth=HTTPBasicAuth(self.username, self.password))
         content = json.loads(resp.content)
+
         if signature_format not in ['json', 'vcard']:
             return content
         if signature_format == 'vcard':
             return content
         signature = content['signature']
-        content['signature'] = vobject.readOne(signature).contents
+        sig_vobject = vobject.readOne(signature).contents
+        content['signature'] = sig_vobject
+        logging.info(vobject.readOne(signature).prettyPrint())
         return content
