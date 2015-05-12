@@ -8,7 +8,7 @@ First install evercontact module:
     python setup.py install
 
     >>> from evercontact import EverContact
-    >>> 
+    >>>
     >>> signature_content = """
     ... Let’s meet next week.
     ... --
@@ -16,7 +16,7 @@ First install evercontact module:
     ... CTO
     ... Kwago
     ... foo@kwago.com"""
-    >>> 
+    >>>
     >>> ec = EverContact('your-username', 'your-password')
     >>> data = ec.fetch(
     ...     '2011-02-12 08:32:14',
@@ -39,7 +39,7 @@ First install evercontact module:
     ORG:Kwaga
     EMAIL:foo@kwago.com
     END:VCARD
-    >>> 
+    >>>
 
 
 ## References:

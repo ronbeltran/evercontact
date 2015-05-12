@@ -1,8 +1,6 @@
 # -*- coding: UTF-8 -*-
-import logging
 import json
 
-import vobject
 import requests
 
 EVERCONTACT_API_ENDPOINT = 'https://api.evercontact.com/pulse-api/tag'
